@@ -1,0 +1,4 @@
+sequence_trainer/data/
+__pycache__/
+*.pyc
+.claude/settings.local.json

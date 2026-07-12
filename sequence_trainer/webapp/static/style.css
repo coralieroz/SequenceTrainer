@@ -1,0 +1,515 @@
+/* ==========================================================================
+   Number Sequence Generator — style.css
+   Mostly-white theme, tradermath-inspired.
+   ========================================================================== */
+
+:root {
+  --bg: #ffffff;
+  --text: #1f2328;
+  --text-muted: #57606a;
+  --accent: #2da44e;
+  --accent-hover: #2c974b;
+  --border: #d0d7de;
+  --card-radius: 8px;
+  --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", "Segoe UI Emoji",
+    Roboto, Helvetica, Arial, sans-serif;
+
+  /* Edge flash colours */
+  --flash-color-correct: rgba(45, 164, 78, 0.85);
+  --flash-color-wrong: rgba(207, 34, 46, 0.85);
+  --flash-size: 18vh;
+
+  /* EDIT ME: flash duration — the single knob for how long an edge flash takes to fade out. */
+  --flash-duration: 0.1s;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-stack);
+  -webkit-font-smoothing: antialiased;
+}
+
+.hidden {
+  display: none !important;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* ------------------------------ layout -------------------------------- */
+
+section[id^="view-"] {
+  min-height: 100vh;
+  padding: 24px 20px 60px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 960px;
+  margin: 0 auto 24px;
+  gap: 16px;
+}
+
+.topbar--practise {
+  justify-content: flex-end;
+}
+
+.app-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.home-main,
+.results-main {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stats-card,
+.practise-card {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 720px) {
+  .home-main,
+  .results-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------- cards --------------------------------- */
+
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 16px 18px;
+}
+
+.card__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ------------------------------- stats --------------------------------- */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat__label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.stat__value {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* ------------------------------- charts --------------------------------- */
+
+.chart-mount {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.chart-mount--donut {
+  display: flex;
+  justify-content: center;
+}
+
+.chart-card--donut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ----------------------------- user picker ------------------------------ */
+
+.user-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-picker__label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+#user-select {
+  font-family: inherit;
+  font-size: 14px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ------------------------------- buttons -------------------------------- */
+
+.btn {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: #f6f8fa;
+  color: var(--text);
+}
+
+.btn:hover {
+  background: #eef1f4;
+}
+
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn--ghost {
+  background: transparent;
+}
+
+.back-btn-floating {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 20;
+}
+
+/* ------------------------------- slider ---------------------------------- */
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+#duration-slider {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+.duration-label {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 90px;
+  text-align: right;
+}
+
+.optiver-caption {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+/* ------------------------------- practise -------------------------------- */
+
+.practise-main {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  gap: 32px;
+  position: relative;
+}
+
+.timer {
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.countdown {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 120px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--bg);
+  z-index: 30;
+}
+
+.sequence-wrap {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sequence {
+  white-space: nowrap;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.answer-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.answer-input {
+  font-family: inherit;
+  font-size: 32px;
+  font-weight: 600;
+  text-align: center;
+  width: 240px;
+  max-width: 80vw;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.answer-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(45, 164, 78, 0.15);
+}
+
+/* Rejection cue: small horizontal shake, ~0.15s */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.15s linear;
+}
+
+/* -------------------------------- results --------------------------------- */
+
+.results-summary-card {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.results-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 24px;
+  flex: 1;
+}
+
+.misses-card {
+  grid-column: 1 / -1;
+}
+
+.misses-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.miss-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.miss-row__seq {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.miss-row__you {
+  color: #cf222e;
+}
+
+.miss-row__answer {
+  color: var(--accent);
+}
+
+.miss-row__family {
+  margin-left: auto;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.misses-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ------------------------------- modal ------------------------------------ */
+
+.modal {
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 0;
+  max-width: 360px;
+  width: 90vw;
+}
+
+.modal::backdrop {
+  background: rgba(31, 35, 40, 0.4);
+}
+
+.modal__form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modal__title {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.modal__label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.modal__input {
+  font-family: inherit;
+  font-size: 15px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.modal__error {
+  color: #cf222e;
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* --------------------------- edge flash overlays --------------------------- */
+
+.flash-edge {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 40;
+}
+
+/* Fades opacity 1 -> 0. Retriggered from JS by removing body[data-flash] then forcing a
+   reflow (void document.body.offsetWidth) before re-adding it, so back-to-back flashes
+   both restart this animation from scratch even if the colour is identical. */
+@keyframes flash-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.flash-edge--top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--flash-size);
+  background: linear-gradient(to bottom, var(--flash-color, transparent), transparent);
+}
+
+.flash-edge--bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--flash-size);
+  background: linear-gradient(to top, var(--flash-color, transparent), transparent);
+}
+
+.flash-edge--left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--flash-size);
+  background: linear-gradient(to right, var(--flash-color, transparent), transparent);
+}
+
+.flash-edge--right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--flash-size);
+  background: linear-gradient(to left, var(--flash-color, transparent), transparent);
+}
+
+body[data-flash="correct"] {
+  --flash-color: var(--flash-color-correct);
+}
+
+body[data-flash="wrong"] {
+  --flash-color: var(--flash-color-wrong);
+}
+
+body[data-flash="correct"] .flash-edge,
+body[data-flash="wrong"] .flash-edge {
+  /* EDIT ME: flash duration — how long the edge glow takes to fade to transparent. */
+  animation: flash-fade var(--flash-duration) linear forwards;
+}

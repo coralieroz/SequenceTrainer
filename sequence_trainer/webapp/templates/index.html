@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Number Sequence Generator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Edge flash overlays: fixed, pointer-events:none, driven by body[data-flash] -->
+  <div id="flash-top" class="flash-edge flash-edge--top"></div>
+  <div id="flash-right" class="flash-edge flash-edge--right"></div>
+  <div id="flash-bottom" class="flash-edge flash-edge--bottom"></div>
+  <div id="flash-left" class="flash-edge flash-edge--left"></div>
+
+  <!-- #back-btn lives outside the view sections because the plan requires it visible in
+       BOTH #view-practise and #view-results (a single DOM id can't live in two places).
+       app.js shows/hides it whenever the active view is practise or results. -->
+  <button id="back-btn" type="button" class="btn btn--ghost back-btn-floating hidden">&larr; Back</button>
+
+  <!-- ============================= HOME ============================= -->
+  <section id="view-home">
+    <header class="topbar">
+      <h1 class="app-title">Number Sequence Generator</h1>
+      <div class="user-picker">
+        <label for="user-select" class="user-picker__label">User</label>
+        <select id="user-select"></select>
+      </div>
+    </header>
+
+    <main class="home-main">
+      <section class="card stats-card">
+        <h2 class="card__title">Last training</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat__label">Best score</span>
+            <span id="best-score" class="stat__value">&mdash;</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Last score</span>
+            <span id="last-score" class="stat__value">&mdash;</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Last accuracy</span>
+            <span id="last-accuracy" class="stat__value">&mdash;</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Last correct</span>
+            <span id="last-correct" class="stat__value">&mdash;</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Last avg speed</span>
+            <span id="last-speed" class="stat__value">&mdash;</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card chart-card">
+        <h2 class="card__title">Contribution graph</h2>
+        <div id="contrib-chart" class="chart-mount chart-mount--contrib"></div>
+      </section>
+
+      <section class="card chart-card">
+        <h2 class="card__title">Speed trend</h2>
+        <div id="trend-chart" class="chart-mount chart-mount--trend"></div>
+      </section>
+
+      <section class="card chart-card chart-card--donut">
+        <h2 class="card__title">Accuracy</h2>
+        <div id="donut-chart" class="chart-mount chart-mount--donut"></div>
+      </section>
+
+      <section class="card practise-card">
+        <h2 class="card__title">Practise</h2>
+        <div class="slider-row">
+          <input type="range" id="duration-slider" min="2" max="25" step="1" value="10">
+          <span id="duration-label" class="duration-label">10 minutes</span>
+        </div>
+        <p id="optiver-caption" class="optiver-caption hidden">Matches Optiver's 26 in 25 assessment</p>
+        <button id="practise-btn" type="button" class="btn btn--primary">Start practise</button>
+      </section>
+    </main>
+  </section>
+
+  <!-- ============================= PRACTISE ============================= -->
+  <section id="view-practise" class="hidden">
+    <header class="topbar topbar--practise">
+      <div id="timer" class="timer">0:00</div>
+    </header>
+
+    <main class="practise-main">
+      <div id="countdown" class="countdown hidden"></div>
+
+      <div class="sequence-wrap">
+        <div id="sequence" class="sequence"></div>
+      </div>
+
+      <div class="answer-wrap">
+        <input
+          id="answer-input"
+          class="answer-input"
+          type="text"
+          inputmode="numeric"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="?"
+        >
+      </div>
+    </main>
+  </section>
+
+  <!-- ============================= RESULTS ============================= -->
+  <section id="view-results" class="hidden">
+    <header class="topbar">
+      <h1 class="app-title">Results</h1>
+      <button id="results-home-btn" type="button" class="btn btn--ghost">&larr; Home</button>
+    </header>
+
+    <main class="results-main">
+      <section class="card results-summary-card">
+        <div class="results-summary-grid">
+          <div class="stat">
+            <span class="stat__label">Score</span>
+            <span id="results-score" class="stat__value">&mdash;</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Correct</span>
+            <span id="results-correct" class="stat__value">&mdash;</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Avg speed</span>
+            <span id="results-speed" class="stat__value">&mdash;</span>
+          </div>
+        </div>
+        <div id="results-donut" class="chart-mount chart-mount--donut"></div>
+      </section>
+
+      <section class="card misses-card">
+        <h2 class="card__title">Missed questions</h2>
+        <ul id="results-misses" class="misses-list"></ul>
+      </section>
+    </main>
+  </section>
+
+  <!-- ============================= ADD USER MODAL ============================= -->
+  <dialog id="add-user-modal" class="modal">
+    <form method="dialog" class="modal__form" id="add-user-form">
+      <h2 class="modal__title">Add user</h2>
+      <label for="new-user-name" class="modal__label">Name</label>
+      <input id="new-user-name" class="modal__input" type="text" maxlength="30" autocomplete="off" placeholder="e.g. Guest">
+      <p id="add-user-error" class="modal__error hidden"></p>
+      <div class="modal__actions">
+        <button id="add-user-cancel" type="button" class="btn btn--ghost">Cancel</button>
+        <button id="add-user-confirm" type="button" class="btn btn--primary">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="{{ url_for('static', filename='charts.js') }}"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
