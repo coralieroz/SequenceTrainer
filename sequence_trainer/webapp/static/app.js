@@ -495,7 +495,7 @@
   const SEQUENCE_FONT_MIN = 16;
 
   function renderSequence(terms) {
-    sequenceEl.textContent = terms.join(", ") + ", _";
+    sequenceEl.textContent = terms.join(", ") + ", __";
     autoscaleSequence();
   }
 
@@ -717,7 +717,7 @@
 
       const seq = document.createElement("span");
       seq.className = "miss-row__seq";
-      seq.textContent = (m.terms || []).join(", ") + ", _";
+      seq.textContent = (m.terms || []).join(", ") + ", __";
 
       const you = document.createElement("span");
       you.className = "miss-row__you";
