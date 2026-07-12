@@ -119,9 +119,9 @@ def test_geometric():
         assert _is_geometric(seq), f"geometric property failed: {seq}"
 
         a0, a1 = seq[0], seq[1]
-        if a1 == a0 * 3:  # r == 3 branch: a0 capped at randint(1, 4)
-            assert 1 <= abs(a0) <= 4, f"r=3 a0 should be capped at 1..4: {seq}"
-            assert abs(seq[-1]) <= 4 * 3 ** (M - 1), f"r=3 last term exceeds documented cap: {seq}"
+        if a1 == a0 * 3:  # r == 3 branch: a0 capped at randint(1, 36)
+            assert 1 <= abs(a0) <= 36, f"r=3 a0 should be capped at 1..36: {seq}"
+            assert abs(seq[-1]) <= 36 * 3 ** (M - 1), f"r=3 last term exceeds documented cap: {seq}"
     print("geometric: OK")
 
 
@@ -168,12 +168,14 @@ def test_interleaved():
         # even result indices, strand for i=0 (length (M+0)//2) at odd ones.
         strand1 = seq[0::2]
         strand0 = seq[1::2]
+        assert len(strand1) == (M + 1) // 2, f"strand1 wrong length: {strand1} (full={seq})"
+        assert len(strand0) == M // 2, f"strand0 wrong length: {strand0} (full={seq})"
         for strand in (strand0, strand1):
-            recognised = (
-                _is_arithmetic(strand) or _is_geometric(strand)
-                or _is_quadratic(strand) or _is_fibonacci(strand)
-            )
-            assert recognised, f"interleaved strand matches no known family: {strand} (full={seq})"
+            # quadratic/fibonacci are deliberately excluded as strand
+            # options at M=7 (too few terms to confirm unambiguously) —
+            # only arithmetic/geometric should ever appear here.
+            recognised = _is_arithmetic(strand) or _is_geometric(strand)
+            assert recognised, f"interleaved strand matches neither arithmetic nor geometric: {strand} (full={seq})"
     print("interleaved: OK")
 
 
@@ -183,9 +185,9 @@ def test_mixed():
         seq = generators.mixed(M)
         assert len(seq) == M
         assert all(isinstance(v, int) for v in seq)
-        # Worst case: |start| up to 49, all 8 steps multiplying by 3 -> 49*3**8
-        # = 321,489. Generous headroom above that, well below the old +/-4/+/-5
-        # regime this bound is meant to rule out.
+        # Worst case at M=7: |start| up to 49, all 6 steps multiplying by 3
+        # -> 49*3**6 = 35,721. Generous headroom above that, well below the
+        # old +/-4/+/-5 regime this bound is meant to rule out.
         assert all(abs(v) < 500_000 for v in seq), f"mixed sequence magnitude exploded: {seq}"
 
         slot0 = [(seq[i], seq[i + 1]) for i in range(0, M - 1, 2)]

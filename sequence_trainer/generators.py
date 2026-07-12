@@ -8,11 +8,11 @@ Fixes carried over from the source script (see plan's "Python transplant
 map"):
   - geometric(): now ALL-INTEGER for every ratio, including the "half" ratio
     (built by exact //2 halving instead of float division) and a capped
-    starting value for r=3 so the 9th term doesn't explode.
+    starting value for r=3 so the last term doesn't explode.
   - mixed(): the multiplication step now excludes 0 (which collapsed the
     sequence to a repeating value) and +/-1 (which killed the "two-rule
     trap" the family is meant to teach), while also avoiding the
-    magnitude blow-up of +/-4 or +/-5 repeated across 9 terms.
+    magnitude blow-up of +/-4 or +/-5 repeated across the sequence.
 """
 
 import random
@@ -33,25 +33,31 @@ def arithmetic(m):
 def geometric(m):
     """an = a0 * r^n — all-integer for every ratio choice.
 
-    r in {2, 3, "half", -2}.
-      - r == "half": a0 = randint(1,12) * 2**(m-1), then built by repeated
-        exact //2 halving so every term (including the last) stays a whole
-        number — no floats anywhere.
-      - r == 3: a0 = randint(1,4), capping the 9th term (a0 * 3**8) at
-        4 * 6561 = 26244 instead of exploding to 78732+.
-      - r in {2, -2}: a0 = randint(1,12), as in the source script (these
-        ratios don't need extra capping at m=9).
+    r in {2, 3, "half", -2}. Starting-value ranges are calibrated so the
+    LAST term's magnitude matches what the m=9 version reached (this module
+    was shortened from m=9 to m=7; the last term is a0*r^(m-1), which drops
+    by a factor of r^2 for the same a0 range at two terms shorter — so a0 is
+    widened by r^2 to restore the original difficulty):
+      - r == "half": a0 = randint(1,12) * 4 * 2**(m-1), then built by
+        repeated exact //2 halving so every term (including the last) stays
+        a whole number — no floats anywhere. Last term = 4*randint(1,12),
+        matching the old m=9 starting range (up to 12*2**8 = 3072).
+      - r == 3: a0 = randint(1,36) (was randint(1,4) at m=9), capping the
+        last term (a0 * 3**6) at 36 * 729 = 26244 (old: 4 * 3**8 = 26244).
+      - r in {2, -2}: a0 = randint(1,48) (was randint(1,12) at m=9),
+        capping |last term| (a0 * r**6) at 48 * 64 = 3072 (old: 12*2**8
+        = 3072).
     """
     r = random.choice([2, 3, "half", -2])
 
     if r == "half":
-        a0 = random.randint(1, 12) * 2 ** (m - 1)
+        a0 = random.randint(1, 12) * 4 * 2 ** (m - 1)
         sequence = [a0]
         for _ in range(m - 1):
             sequence.append(sequence[-1] // 2)
         return sequence
 
-    a0 = random.randint(1, 4) if r == 3 else random.randint(1, 12)
+    a0 = random.randint(1, 36) if r == 3 else random.randint(1, 48)
     sequence = [a0 * r ** i for i in range(m)]
     return sequence
 
@@ -82,27 +88,25 @@ def fibonacci(m):
 
 
 def interleaved(m):
-    """Two independent strands (each one of the four base families) woven
-    together, e.g. 2,3,7,6,12,17,24. Verbatim decider logic from the source
-    script, including its edge-case quirk: random.random() is a continuous
-    draw, so `decider == 0.9` exactly is a probability-zero event, but as
-    written it falls through to the `else` (fibonacci) branch because
-    neither the geometric branch (`< 0.9`) nor the quadratic branch
-    (`> 0.9`) catches it. Left as-is rather than "fixed" per the plan.
+    """Two independent strands, each either arithmetic or geometric, woven
+    together, e.g. 2,3,7,6,12,17,24. quadratic/fibonacci are deliberately
+    excluded as strand options: at m=7 a strand shows only 3-4 terms, which
+    isn't enough to confirm a quadratic's constant second-difference or a
+    fibonacci-like recurrence beyond doubt (both need 4+ terms to check two
+    consecutive differences) — arithmetic/geometric stay unambiguous at that
+    length. quadratic() and fibonacci() remain available as standalone
+    question families in questions.py; this only affects interleaved's
+    strand choice.
     """
     i = 0
     strands = []
     while i < 2:
         decider = random.random()
         length = (m + i) // 2
-        if decider < 0.45:
+        if decider < 0.5:
             seq = arithmetic(length)
-        elif decider >= 0.45 and decider < 0.9:
-            seq = geometric(length)
-        elif decider > 0.9 and decider <= 0.95:
-            seq = quadratic(length)
         else:
-            seq = fibonacci(length)
+            seq = geometric(length)
         strands.append(seq)
         i += 1
 
@@ -121,7 +125,7 @@ def mixed(m):
     Multiplication step: c drawn from {-3,-2,2,3} — excludes 0 (which
     collapses the sequence to a repeated value), +/-1 (which makes the
     multiplication step a no-op / sign-flip and kills the trap), and
-    +/-4 / +/-5 (which blow up the magnitude across 9 terms).
+    +/-4 / +/-5 (which blow up the magnitude across the sequence).
     """
     def make_op():
         if random.random() < 0.5:

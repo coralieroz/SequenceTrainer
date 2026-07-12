@@ -7,9 +7,11 @@ No game rules here — see generators.py / questions.py / session.py.
 from pathlib import Path
 
 # Length of every generated sequence (m-1 terms shown, 1 hidden as the answer).
-# m=9 matches the source terminal script's choice for interleaved-quadratic
-# sequences to come out sensible.
-M = 9
+# m=7: interleaved() is restricted to arithmetic/geometric strands (see
+# generators.py), both unambiguous at the 3-4 terms a strand shows at this
+# length, so the longer m=9 the source script needed for quadratic/fibonacci
+# strands is no longer necessary.
+M = 7
 
 # Root package directory (…/sequence_trainer)
 PACKAGE_DIR = Path(__file__).resolve().parent
