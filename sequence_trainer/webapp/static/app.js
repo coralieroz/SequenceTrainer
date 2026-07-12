@@ -31,8 +31,8 @@
   const donutChartEl = document.getElementById("donut-chart");
 
   const bestScoreEl = document.getElementById("best-score");
+  const bestAccuracyEl = document.getElementById("best-accuracy");
   const lastScoreEl = document.getElementById("last-score");
-  const lastAccuracyEl = document.getElementById("last-accuracy");
   const lastCorrectEl = document.getElementById("last-correct");
   const lastSpeedEl = document.getElementById("last-speed");
 
@@ -297,7 +297,7 @@
    * ------------------------------------------------------------------ */
 
   function emptyStats() {
-    return { highest_score: null, contribution: [], speed_trend: [], last_session: null };
+    return { best: null, contribution: [], speed_trend: [], last_session: null };
   }
 
   async function loadStats() {
@@ -315,20 +315,17 @@
 
   function renderHomeStats(stats) {
     const last = stats.last_session || null;
+    const best = stats.best || null;
 
-    bestScoreEl.textContent =
-      stats.highest_score === null || stats.highest_score === undefined
-        ? "No sessions yet"
-        : formatScore(stats.highest_score);
+    bestScoreEl.textContent = best ? formatScore(best.score) : "No sessions yet";
+    bestAccuracyEl.textContent = best ? formatPercent(best.accuracy) : "—";
 
     if (!last) {
       lastScoreEl.textContent = "No sessions yet";
-      lastAccuracyEl.textContent = "—";
       lastCorrectEl.textContent = "0 / 0";
       lastSpeedEl.textContent = "—";
     } else {
       lastScoreEl.textContent = formatScore(last.score_per_min);
-      lastAccuracyEl.textContent = formatPercent(last.accuracy);
       lastCorrectEl.textContent = formatCount(last.correct, last.total);
       lastSpeedEl.textContent = formatSpeed(last.avg_response_time);
     }

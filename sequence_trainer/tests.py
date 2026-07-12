@@ -14,7 +14,7 @@ import random
 import time
 import traceback
 
-from . import generators, session as session_module, storage
+from . import generators, scoring, session as session_module, storage
 from .config import M
 from .questions import Question, check, parse_answer
 
@@ -237,6 +237,39 @@ def test_check():
 
 
 # ---------------------------------------------------------------------------
+# scoring.py: best_session()
+# ---------------------------------------------------------------------------
+
+def test_best_session():
+    assert scoring.best_session([]) is None
+
+    sessions = [
+        {"completed": 1, "questions_answered": 5, "net_score_per_min": 1.0,
+         "accuracy": 0.6, "started_at": "2026-01-01T00:00:00"},
+        {"completed": 1, "questions_answered": 5, "net_score_per_min": 3.0,
+         "accuracy": 0.9, "started_at": "2026-01-02T00:00:00"},
+        # aborted session with the highest raw score -> must be excluded
+        {"completed": 0, "questions_answered": 5, "net_score_per_min": 5.0,
+         "accuracy": 1.0, "started_at": "2026-01-03T00:00:00"},
+        # 0-question session -> must be excluded
+        {"completed": 1, "questions_answered": 0, "net_score_per_min": None,
+         "accuracy": None, "started_at": "2026-01-04T00:00:00"},
+    ]
+    best = scoring.best_session(sessions)
+    assert best == {"score": 3.0, "accuracy": 0.9}, best
+
+    tie = [
+        {"completed": 1, "questions_answered": 5, "net_score_per_min": 2.0,
+         "accuracy": 0.5, "started_at": "2026-01-01T00:00:00"},
+        {"completed": 1, "questions_answered": 5, "net_score_per_min": 2.0,
+         "accuracy": 0.8, "started_at": "2026-01-05T00:00:00"},
+    ]
+    tie_best = scoring.best_session(tie)
+    assert tie_best == {"score": 2.0, "accuracy": 0.8}, tie_best
+    print("best_session: OK")
+
+
+# ---------------------------------------------------------------------------
 # session.py: expiry + finalize-once, without waiting for a real deadline
 # ---------------------------------------------------------------------------
 
@@ -297,6 +330,7 @@ def main():
         test_mixed,
         test_parse_answer,
         test_check,
+        test_best_session,
         test_session_expiry_finalizes_once,
     ]
     failures = []

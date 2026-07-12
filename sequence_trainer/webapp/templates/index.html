@@ -30,44 +30,52 @@
     </header>
 
     <main class="home-main">
-      <section class="card stats-card">
-        <h2 class="card__title">Last training</h2>
-        <div class="stats-grid">
-          <div class="stat">
-            <span class="stat__label">Best score</span>
-            <span id="best-score" class="stat__value">&mdash;</span>
-          </div>
-          <div class="stat">
-            <span class="stat__label">Last score</span>
-            <span id="last-score" class="stat__value">&mdash;</span>
-          </div>
-          <div class="stat">
-            <span class="stat__label">Last accuracy</span>
-            <span id="last-accuracy" class="stat__value">&mdash;</span>
-          </div>
-          <div class="stat">
-            <span class="stat__label">Last correct</span>
-            <span id="last-correct" class="stat__value">&mdash;</span>
-          </div>
-          <div class="stat">
-            <span class="stat__label">Last avg speed</span>
-            <span id="last-speed" class="stat__value">&mdash;</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="card chart-card">
-        <h2 class="card__title">Contribution graph</h2>
+      <section class="card contrib-card">
+        <h2 class="card__title">Contributions</h2>
         <div id="contrib-chart" class="chart-mount chart-mount--contrib"></div>
       </section>
 
-      <section class="card chart-card">
-        <h2 class="card__title">Speed trend</h2>
+      <section class="card perf-card">
+        <h2 class="card__title">Performance analytics</h2>
+        <div class="stats-grid">
+          <div class="stat has-tip">
+            <span class="stat__label">Best score</span>
+            <span id="best-score" class="stat__value">&mdash;</span>
+            <span class="tip-box">
+              <span class="frac"><span class="frac__num">number of questions answered</span><span class="frac__den">min</span></span>
+            </span>
+          </div>
+          <div class="stat has-tip">
+            <span class="stat__label">Accuracy</span>
+            <span id="best-accuracy" class="stat__value">&mdash;</span>
+            <span class="tip-box">Accuracy associated with best score.</span>
+          </div>
+        </div>
+        <h3 class="card__subtitle">Speed trend</h3>
         <div id="trend-chart" class="chart-mount chart-mount--trend"></div>
       </section>
 
-      <section class="card chart-card chart-card--donut">
-        <h2 class="card__title">Accuracy</h2>
+      <section class="card training-card">
+        <h2 class="card__title">Last training</h2>
+        <div class="stats-grid">
+          <div class="stat has-tip">
+            <span class="stat__label">Score</span>
+            <span id="last-score" class="stat__value">&mdash;</span>
+            <span class="tip-box">
+              <span class="frac"><span class="frac__num">number of questions answered</span><span class="frac__den">min</span></span>
+            </span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Correct</span>
+            <span id="last-correct" class="stat__value">&mdash;</span>
+          </div>
+          <div class="stat has-tip">
+            <span class="stat__label">Avg speed</span>
+            <span id="last-speed" class="stat__value">&mdash;</span>
+            <span class="tip-box">Average time spent per question.</span>
+          </div>
+        </div>
+        <h3 class="card__subtitle">Accuracy</h3>
         <div id="donut-chart" class="chart-mount chart-mount--donut"></div>
       </section>
 

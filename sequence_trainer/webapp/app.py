@@ -80,7 +80,7 @@ def get_stats():
     sessions = storage.load_sessions(user)
     return jsonify({
         "contribution": scoring.contribution_graph(sessions),
-        "highest_score": scoring.highest_score(sessions),
+        "best": scoring.best_session(sessions),
         "speed_trend": scoring.speed_trend(sessions),
         "last_session": scoring.last_session_panel(sessions),
     })

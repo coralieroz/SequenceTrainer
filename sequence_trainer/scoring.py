@@ -4,7 +4,7 @@
      numbers session.py needs for its summary + sessions.csv row. session.py
      calls this with its own in-memory results — it never re-reads a CSV to
      compute these.
-  2. Home-tab aggregates (contribution / highest_score / speed_trend /
+  2. Home-tab aggregates (contribution / best_session / speed_trend /
      last_session_panel): computed from already-loaded CSV history
      (storage.load_sessions()), called by the /api/stats route.
 
@@ -80,10 +80,18 @@ def contribution_graph(sessions: list) -> list:
     return [{"date": d, "minutes": round(m, 2)} for d, m in sorted(by_date.items())]
 
 
-def highest_score(sessions: list):
-    """Highest net_score_per_min among eligible sessions, or None."""
-    scores = [s["net_score_per_min"] for s in _eligible(sessions) if s["net_score_per_min"] is not None]
-    return max(scores) if scores else None
+def best_session(sessions: list):
+    """The eligible session with the highest net_score_per_min, returning
+    its score AND that SAME session's accuracy (not the overall best
+    accuracy) as {"score", "accuracy"}, or None if no session is eligible.
+    Ties broken by most recent started_at.
+    """
+    elig = [s for s in _eligible(sessions) if s["net_score_per_min"] is not None]
+    if not elig:
+        return None
+    elig.sort(key=lambda s: (s["net_score_per_min"], s.get("started_at") or ""))
+    best = elig[-1]
+    return {"score": best["net_score_per_min"], "accuracy": best["accuracy"]}
 
 
 def speed_trend(sessions: list) -> list:

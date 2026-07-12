@@ -82,7 +82,7 @@ section[id^="view-"] {
   gap: 16px;
 }
 
-.stats-card,
+.contrib-card,
 .practise-card {
   grid-column: 1 / -1;
 }
@@ -112,6 +112,15 @@ section[id^="view-"] {
   letter-spacing: 0.02em;
 }
 
+.card__subtitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 16px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
 /* ------------------------------- stats --------------------------------- */
 
 .stats-grid {
@@ -136,6 +145,62 @@ section[id^="view-"] {
   font-weight: 600;
 }
 
+/* ------------------------------- tooltips -------------------------------- */
+
+.stat.has-tip {
+  position: relative;
+  cursor: default;
+}
+
+.stat.has-tip .stat__label {
+  width: fit-content;
+  border-bottom: 1px dotted var(--text-muted);
+}
+
+.tip-box {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 8px;
+  max-width: 220px;
+  padding: 8px 10px;
+  background: #1f2328;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: normal;
+  border-radius: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.stat.has-tip:hover .tip-box,
+.stat.has-tip:focus-within .tip-box {
+  opacity: 1;
+  visibility: visible;
+}
+
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.frac__num {
+  padding: 0 2px 1px;
+  border-bottom: 1px solid currentColor;
+}
+
+.frac__den {
+  padding: 1px 2px 0;
+}
+
 /* ------------------------------- charts --------------------------------- */
 
 .chart-mount {
@@ -146,12 +211,6 @@ section[id^="view-"] {
 .chart-mount--donut {
   display: flex;
   justify-content: center;
-}
-
-.chart-card--donut {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 /* ----------------------------- user picker ------------------------------ */
